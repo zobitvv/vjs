@@ -1,0 +1,258 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Player</title>
+    <meta name="description" content="Watch video content">
+    <meta name="keywords" content="video, player, streaming">
+    
+    <meta property="og:type" content="video.other">
+    <meta property="og:title" content="Video Player">
+    <meta property="og:description" content="Watch video content">
+        <meta property="og:video" content="">
+    <meta property="og:video:type" content="application/x-mpegURL">
+    
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #3f37c9;
+            --accent: #f72585;
+            --dark: #222639;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+        }
+        
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #000;
+        }
+        
+        #player-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+        }
+        
+        .aspect-ratio-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        
+        #my-player, 
+        video, 
+        .video-js,
+        .plyr {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100% !important;
+            height: 100% !important;
+        }
+        
+        .player-logo {
+            position: absolute;
+            z-index: 99999;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            max-width: 100px;
+        }
+        
+        .player-logo:hover {
+            opacity: 1;
+        }
+        
+                .player-logo {
+            top: 10px;
+            right: 10px;
+        }
+                
+                
+        .video-js .vjs-control-bar {
+            background-color: var(--vjs-primary-bg-color, rgba(43, 51, 63, 0.7));
+        }
+        
+        .video-js .vjs-big-play-button {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            line-height: 80px;
+            top: 50%;
+            left: 50%;
+            margin-top: -40px;
+            margin-left: -40px;
+        }
+        
+        .plyr__control--overlaid {
+            background: var(--primary) !important;
+        }
+        
+        .plyr--full-ui input[type=range] {
+            color: var(--primary) !important;
+        }
+        
+        .plyr__control.plyr__tab-focus,
+        .plyr__control:hover,
+        .plyr__control[aria-expanded=true] {
+            background: var(--primary-dark) !important;
+        }
+        
+                .vjs-download-button,
+        .plyr__controls__item.plyr__control[data-plyr="download"],
+        .clp-download {
+            display: none !important;
+        }
+                
+        .cc-controls[data-cc-controls] {
+            display: block !important;
+        }
+
+        .unmute-button {
+            position: absolute;
+            z-index: 20;
+            padding: 10px 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: none;
+        }
+        
+        .unmute-button:hover {
+            background-color: rgba(255, 255, 255, 0.9) !important;
+        }
+        
+                .unmute-button {
+            top: 20px;
+            left: 20px;
+        }
+                
+        #ad-container {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            z-index: 100;
+            pointer-events: none;
+            background: rgba(0,0,0,0.5);
+        }
+        
+        #ad-container > * {
+            pointer-events: auto;
+        }
+        
+        /* Custom styles for Clappr auto-hide */
+        .media-control-hide {
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+    </style>
+
+        <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet">
+    <script src="https://vjs.zencdn.net/8.10.0/video.min.js" type="b47d58e3a0d0fc87cbc113a4-text/javascript"></script>
+    <link href="https://cdn.jsdelivr.net/npm/videojs-contrib-quality-levels@4.0.0/dist/videojs-contrib-quality-levels.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/videojs-contrib-quality-levels@4.0.0/dist/videojs-contrib-quality-levels.min.js" type="b47d58e3a0d0fc87cbc113a4-text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/videojs-http-streaming@3.9.1/dist/videojs-http-streaming.min.js" type="b47d58e3a0d0fc87cbc113a4-text/javascript"></script>
+        
+    </head>
+<body>
+    <div id="player-container">
+        <div class="aspect-ratio-container">
+                        
+                        
+                        <video id="my-player" class="video-js vjs-default-skin vjs-big-play-centered" 
+                controls                 
+                                                                                playsinline
+                data-setup='{"fluid": true}'>
+                
+                <source src="" type="application/x-mpegURL">
+                
+                                
+                <p class="vjs-no-js">
+                    To view this video please enable JavaScript, and consider upgrading to a web browser that
+                    <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+                </p>
+            </video>
+            
+                    </div>
+    </div>
+
+    
+    <script type="b47d58e3a0d0fc87cbc113a4-text/javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+                var player = videojs('my-player', {
+            html5: {
+                vhs: {
+                    overrideNative: true,
+                    bufferSize: 30,
+                    enableLowInitialPlaylist: true,
+                    smoothQualityChange: true,
+                    handlePartialData: true
+                },
+                nativeAudioTracks: false,
+                nativeVideoTracks: false,
+                nativeTextTracks: false
+            },
+            controlBar: {
+                pictureInPictureToggle: true,
+                fullscreenToggle: true,
+                playbackRateMenuButton: true            },
+            playbackRates: [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2],
+            liveui: true,
+            liveTracker: {
+                trackingThreshold: 0,
+                liveTolerance: 15
+            },
+            responsive: true,
+            fluid: true
+        });
+        
+                
+                
+                let controlsTimeout;
+        
+        function hideControls() {
+            player.controlBar.addClass('vjs-fade-out');
+        }
+        
+        function resetControlsTimer() {
+            clearTimeout(controlsTimeout);
+            player.controlBar.removeClass('vjs-fade-out');
+            controlsTimeout = setTimeout(hideControls, 3000);
+        }
+        
+        player.on('useractive', resetControlsTimer);
+        player.on('userinactive', hideControls);
+        
+        player.on('loadedmetadata', resetControlsTimer);
+                
+                
+            });
+    </script>
+    
+
+
+<script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="b47d58e3a0d0fc87cbc113a4-|49" defer></script><script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"c74760c40c584b4780be35099c875a44","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>
