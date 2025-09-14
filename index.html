@@ -21,6 +21,7 @@
       width: 100%;
       height: 100%;
       position: relative;
+      background: #000;
     }
     video {
       width: 100% !important;
@@ -37,6 +38,12 @@
       max-width: 60px;
       height: auto;
     }
+    .error-msg {
+      color: red;
+      text-align: center;
+      padding: 20px;
+      font-size: 18px;
+    }
   </style>
 </head>
 <body>
@@ -47,28 +54,42 @@
 
     <video id="video" class="video-js vjs-default-skin vjs-big-play-centered" 
            controls autoplay playsinline></video>
+    <div id="error" class="error-msg" style="display:none;"></div>
   </div>
 
   <script>
-    const video = document.getElementById('video');
-    const videoSrc = "https://d4.merichunidya.com:1686/hls/star1in.m3u8?md5=wHK0W1iaw3TJECehzotTCw&expires=1757882729";
-
-    if (Hls.isSupported()) {
-      const hls = new Hls();
-      hls.loadSource(videoSrc);
-      hls.attachMedia(video);
-    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-      // Safari / iOS
-      video.src = videoSrc;
+    function getQueryParam(name) {
+      const params = new URLSearchParams(window.location.search);
+      return params.get(name);
     }
 
-    videojs(video, {
-      liveui: true,
-      controlBar: {
-        pictureInPictureToggle: true,
-        fullscreenToggle: true,
+    const video = document.getElementById('video');
+    const errorBox = document.getElementById('error');
+    const url = getQueryParam("url");
+
+    if (!url) {
+      errorBox.style.display = "block";
+      errorBox.textContent = "⚠️ No stream URL provided. Use ?url=your.m3u8";
+    } else {
+      if (Hls.isSupported()) {
+        const hls = new Hls();
+        hls.loadSource(url);
+        hls.attachMedia(video);
+      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = url; // Safari
+      } else {
+        errorBox.style.display = "block";
+        errorBox.textContent = "❌ Your browser does not support HLS playback.";
       }
-    });
+
+      videojs(video, {
+        liveui: true,
+        controlBar: {
+          pictureInPictureToggle: true,
+          fullscreenToggle: true
+        }
+      });
+    }
   </script>
 </body>
 </html>
