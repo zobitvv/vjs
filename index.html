@@ -1,22 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Video Player</title>
-  <meta name="description" content="Watch video content">
-  <meta name="keywords" content="video, player, streaming">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My HLS Player</title>
 
-  <meta property="og:type" content="video.other">
-  <meta property="og:title" content="Video Player">
-  <meta property="og:description" content="Watch video content">
-  <meta property="og:video" content="">
-  <meta property="og:video:type" content="application/x-mpegURL">
-
-  <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet">
+  <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet"/>
   <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/videojs-contrib-quality-levels@4.0.0/dist/videojs-contrib-quality-levels.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/videojs-http-streaming@3.9.1/dist/videojs-http-streaming.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
   <style>
     body, html {
@@ -25,93 +16,57 @@
       width: 100%;
       height: 100%;
       background: #000;
-      font-family: Arial, sans-serif;
     }
-
     #player-container {
-      position: absolute;
-      top: 0;
-      left: 0;
       width: 100%;
       height: 100%;
+      position: relative;
     }
-
-    video, .video-js {
-      position: absolute;
-      top: 0;
-      left: 0;
+    video {
       width: 100% !important;
       height: 100% !important;
     }
-
-    .video-js .vjs-big-play-button {
-      background-color: #4361ee;
-      border-radius: 50%;
-      width: 80px;
-      height: 80px;
-      line-height: 80px;
-      top: 50%;
-      left: 50%;
-      margin-top: -40px;
-      margin-left: -40px;
+    .player-logo {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 99;
+      opacity: 0.8;
     }
-
-    .vjs-download-button {
-      display: none !important;
+    .player-logo img {
+      max-width: 60px;
+      height: auto;
     }
   </style>
 </head>
 <body>
   <div id="player-container">
-    <video id="my-player" class="video-js vjs-default-skin vjs-big-play-centered" 
-           controls autoplay playsinline data-setup='{"fluid": true}'>
-      <p class="vjs-no-js">
-        To view this video please enable JavaScript, and consider upgrading to a web browser that
-        <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
-      </p>
-    </video>
+    <div class="player-logo">
+      <img src="https://i.postimg.cc/Wbysthbb/image-removebg-preview.png" alt="Logo"/>
+    </div>
+
+    <video id="video" class="video-js vjs-default-skin vjs-big-play-centered" 
+           controls autoplay playsinline></video>
   </div>
 
   <script>
-    function getQueryParam(param) {
-      const urlParams = new URLSearchParams(window.location.search);
-      return urlParams.get(param);
+    const video = document.getElementById('video');
+    const videoSrc = "https://d4.merichunidya.com:1686/hls/star1in.m3u8?md5=wHK0W1iaw3TJECehzotTCw&expires=1757882729";
+
+    if (Hls.isSupported()) {
+      const hls = new Hls();
+      hls.loadSource(videoSrc);
+      hls.attachMedia(video);
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      // Safari / iOS
+      video.src = videoSrc;
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
-      const streamUrl = getQueryParam('url');
-      const player = videojs('my-player', {
-        html5: {
-          vhs: {
-            overrideNative: true,
-            bufferSize: 30,
-            enableLowInitialPlaylist: true,
-            smoothQualityChange: true,
-            handlePartialData: true
-          },
-          nativeAudioTracks: false,
-          nativeVideoTracks: false,
-          nativeTextTracks: false
-        },
-        controlBar: {
-          pictureInPictureToggle: true,
-          fullscreenToggle: true,
-          playbackRateMenuButton: true
-        },
-        playbackRates: [0.5, 1, 1.25, 1.5, 2],
-        liveui: true,
-        responsive: true,
-        fluid: true
-      });
-
-      if (streamUrl) {
-        player.src({
-          src: streamUrl,
-          type: 'application/x-mpegURL'
-        });
-        player.play();
-      } else {
-        alert('No stream URL provided. Use ?url=YOUR_M3U8_LINK');
+    videojs(video, {
+      liveui: true,
+      controlBar: {
+        pictureInPictureToggle: true,
+        fullscreenToggle: true,
       }
     });
   </script>
