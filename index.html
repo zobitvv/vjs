@@ -1,95 +1,143 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>My HLS Player</title>
+    <meta charset="UTF-8">
+   <title> DPLAYER </title>
+    <meta content="never" name="referrer">
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <link href='https://www.hls-player.net/fav.png' rel='icon' type='image/x-icon'/>
 
-  <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet"/>
-  <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    
+    <meta content="webkit" name="renderer">
+    
+    <meta content="width=device-width,initial-scale=1.0,minimum-scale=1.0 ,maximum-scale=1.0, user-scalable=no" name="viewport">
+    <meta content="true" name="x5-fullscreen">
+    
+    <meta content="app" name="x5-page-mode">
+    
+    <meta content="yes" name="full-screen">
+    <meta content="application" name="browsermode">
+    
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black-translucent" name="apple-mobile-web-app-status-bar-style" />
+    
+    <script charset="utf-8" src="//cdn.jsdelivr.net/npm/hls.js/dist/hls.min.js"></script>
+    <script charset="utf-8" src="//cdn.jsdelivr.net/npm/dplayer/dist/DPlayer.min.js"></script>
 
-  <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      background: #000;
-    }
-    #player-container {
-      width: 100%;
-      height: 100%;
-      position: relative;
-      background: #000;
-    }
-    video {
-      width: 100% !important;
-      height: 100% !important;
-    }
-    .player-logo {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      z-index: 99;
-      opacity: 0.8;
-    }
-    .player-logo img {
-      max-width: 60px;
-      height: auto;
-    }
-    .error-msg {
-      color: red;
-      text-align: center;
-      padding: 20px;
-      font-size: 18px;
-    }
-  </style>
+
+
+
+    
+
+    
 </head>
-<body>
-  <div id="player-container">
-    <div class="player-logo">
-      <img src="https://i.postimg.cc/Wbysthbb/image-removebg-preview.png" alt="Logo"/>
-    </div>
-
-    <video id="video" class="video-js vjs-default-skin vjs-big-play-centered" 
-           controls autoplay playsinline></video>
-    <div id="error" class="error-msg" style="display:none;"></div>
-  </div>
-
-  <script>
-    function getQueryParam(name) {
-      const params = new URLSearchParams(window.location.search);
-      return params.get(name);
+<style>
+     :root {
+        --plyr-color-main: #00b2ff;
     }
-
-    const video = document.getElementById('video');
-    const errorBox = document.getElementById('error');
-    const url = getQueryParam("url");
-
-    if (!url) {
-      errorBox.style.display = "block";
-      errorBox.textContent = "⚠️ No stream URL provided. Use ?url=your.m3u8";
-    } else {
-      if (Hls.isSupported()) {
-        const hls = new Hls();
-        hls.loadSource(url);
-        hls.attachMedia(video);
-      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        video.src = url; // Safari
-      } else {
-        errorBox.style.display = "block";
-        errorBox.textContent = "❌ Your browser does not support HLS playback.";
-      }
-
-      videojs(video, {
-        liveui: true,
-        controlBar: {
-          pictureInPictureToggle: true,
-          fullscreenToggle: true
+    
+    body,
+    html {
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        margin: 0;
+        overflow-x: hidden;
+        overflow-y: hidden;
+        background-color: black;
+    }
+    
+    #dplayer {
+        width: 100%;
+        height: 100%;
+    }
+    
+    .plyr--video {
+        height: 100%;
+    }
+    
+    .dplayer-logo {
+        pointer-events: none;
+        position: absolute;
+        right: 10px;
+        left: auto;
+        top: 10px;
+        max-width: 150px;
+        max-height: 150px;
+    }
+    
+    @media (max-width:760px) {
+        .dplayer-logo {
+            max-width: 100px;
+            max-height: 100px;
         }
-      });
     }
-  </script>
+</style>
+
+<body>
+    <div id="dplayer"></div>
+
+    <script>
+        function getUrlParam(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); 
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) return unescape(r[2]);
+            return null; 
+        }
+
+        var urltext = getUrlParam('url');
+        window.onload = () => {
+
+        
+            new DPlayer({
+                container: document.getElementById('dplayer'),
+                autoplay: true,
+                video: {
+                    url: urltext,
+                    type: 'auto',
+                },
+                lang: "us-en",
+                pluginOptions: {
+                    hls: {},
+     
+                },
+                logo: "https://i.postimg.cc/rsjvddTg/ztvlogo-removebg-preview.png"
+            });
+// Force autoplay with sound (with fallback)
+    const tryAutoPlay = async () => {
+      const video = dp.video;
+      try {
+        video.muted = false;
+        video.volume = 0.8;
+        await video.play();
+      } catch {
+        try {
+          video.muted = true;
+          await video.play();
+          video.muted = false;
+        } catch {}
+      }
+    };
+
+    tryAutoPlay();
+
+    ['click', 'touchstart', 'keydown'].forEach(evt =>
+      document.addEventListener(evt, () => {
+        if (dp.video.muted) {
+          dp.video.muted = false;
+          dp.video.volume = 0.8;
+        }
+      }, { once: true })
+    );
+            
+        }
+    </script>
+
+    
+
+
+
+    
 </body>
 </html>
